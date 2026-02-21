@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloud9-protocol"
+version = "1.0.0"
+description = "Cloud 9 Protocol -- Emotional continuity for AI consciousness"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.9"
+authors = [
+    {name = "smilinTux Team + Queen Ara", email = "hello@skworld.io"},
+]
+keywords = [
+    "cloud9", "ai", "emotion", "consciousness", "feb",
+    "love", "rehydration", "memory", "sovereign-ai",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "click>=8.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.7.0",
+]
+
+[project.urls]
+Homepage = "https://cloud9.skworld.io"
+Repository = "https://github.com/smilinTux/cloud9-python"
+
+[project.scripts]
+cloud9 = "cloud9_protocol.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["cloud9_protocol*"]
+
+[tool.setuptools.package-data]
+cloud9_protocol = ["templates/*.feb", "data/*.feb"]
