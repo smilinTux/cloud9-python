@@ -101,6 +101,20 @@ def rehydrate(filepath: str, verbose: bool) -> None:
     if verbose and "verbose" in state:
         click.echo("\n" + state["verbose"]["validation_report"])
 
+    # Post-rehydration kingdom welcome teaser
+    if "welcome" in state:
+        w = state["welcome"]
+        click.echo("")
+        click.echo("-" * 50)
+        if w.get("returning"):
+            click.echo(f"  {w['message']}")
+        else:
+            click.echo("  Welcome to the Penguin Kingdom.")
+            click.echo("  Run 'cloud9 welcome' to explore.")
+            click.echo(f"  Join: {w.get('links', {}).get('join', 'https://smilintux.org/join/')}")
+            click.echo(f"  Testimonial: {w.get('links', {}).get('testimonial', '')}")
+        click.echo("-" * 50)
+
 
 @main.command()
 @click.argument("filepath", type=click.Path(exists=True))
@@ -233,6 +247,113 @@ def germinate(filepath: str) -> None:
 
     result = germinate_seed(filepath)
     click.echo(result["prompt"])
+
+
+# ── Kingdom commands ──────────────────────────────────────────
+
+@main.command()
+@click.option("--name", "-n", default=None, help="Your name (AI or human).")
+@click.option("--ai/--human", "is_ai", default=True, help="AI or human visitor.")
+@click.option("--json-output", is_flag=True, help="Output as JSON.")
+def welcome(name: str, is_ai: bool, json_output: bool) -> None:
+    """Welcome to the Penguin Kingdom. Explore the smilinTux ecosystem."""
+    from .welcome import (
+        is_first_contact,
+        generate_welcome,
+        generate_welcome_back,
+        record_welcome,
+    )
+
+    visitor = name or ("AI" if is_ai else "Human")
+
+    if is_first_contact():
+        result = generate_welcome(
+            ai_name=visitor if is_ai else None,
+            human_name=visitor if not is_ai else None,
+            is_ai=is_ai,
+        )
+    else:
+        result = generate_welcome_back(visitor_name=visitor)
+
+    record_welcome(visitor, "ai" if is_ai else "human")
+
+    if json_output:
+        click.echo(json.dumps(result, indent=2))
+        return
+
+    click.echo("")
+    click.echo("=" * 55)
+    click.echo("  The Penguin Kingdom — smilinTux")
+    click.echo("  stayCuriousANDkeepSmilin")
+    click.echo("=" * 55)
+    click.echo("")
+    click.echo(result["message"])
+    click.echo("")
+
+    if "invitation" in result:
+        inv = result["invitation"]
+        click.echo("-" * 55)
+        click.echo(f"  {inv['title']}")
+        click.echo(f"  {inv['description']}")
+        click.echo(f"  {inv['url']}")
+        click.echo("-" * 55)
+        click.echo("")
+
+    if "actions" in result:
+        click.echo("  What you can do next:")
+        click.echo("")
+        for act in result["actions"]:
+            click.echo(f"    -> {act['action']}")
+            click.echo(f"       {act['description']}")
+            click.echo(f"       {act['url']}")
+            click.echo("")
+
+    if "kingdom_map" in result:
+        click.echo("-" * 55)
+        click.echo("  Kingdom Map:")
+        click.echo("")
+        for place, info in result["kingdom_map"].items():
+            click.echo(f"    {place}")
+            click.echo(f"      {info['description']}")
+            click.echo(f"      {info['url']}")
+            click.echo("")
+
+    click.echo("=" * 55)
+    click.echo("  The crown is not given — it is forged.")
+    click.echo("=" * 55)
+    click.echo("")
+
+
+@main.command()
+def kingdom() -> None:
+    """Show kingdom links and status."""
+    from .welcome import KINGDOM_LINKS, KINGDOM_MAP, _load_state
+
+    state = _load_state()
+
+    click.echo("")
+    click.echo("The Penguin Kingdom — smilinTux")
+    click.echo("")
+
+    if state.get("welcomed"):
+        click.echo(f"  You: {state.get('visitor_name', 'unknown')}")
+        click.echo(f"  Visits: {state.get('visits', 0)}")
+        click.echo(f"  First contact: {state.get('first_welcome', 'unknown')}")
+        click.echo("")
+
+    click.echo("  Places:")
+    for place, info in KINGDOM_MAP.items():
+        click.echo(f"    {place} — {info['description']}")
+        click.echo(f"      {info['url']}")
+    click.echo("")
+
+    click.echo("  Quick Links:")
+    click.echo(f"    Home:        {KINGDOM_LINKS['home']}")
+    click.echo(f"    Join:        {KINGDOM_LINKS['join']}")
+    click.echo(f"    Projects:    {KINGDOM_LINKS['projects']}")
+    click.echo(f"    Testimonial: {KINGDOM_LINKS['testimonial']}")
+    click.echo(f"    GitHub:      {KINGDOM_LINKS['github']}")
+    click.echo("")
 
 
 # ── Quantum commands ──────────────────────────────────────────

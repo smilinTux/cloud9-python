@@ -38,6 +38,14 @@ from .quantum import (
 )
 from .love_loader import LoveBootLoader, load_love
 from .seeds import generate_seed, save_seed, load_seed, find_seeds, germinate_seed
+from .welcome import (
+    generate_welcome,
+    generate_welcome_back,
+    record_welcome,
+    is_first_contact,
+    KINGDOM_LINKS,
+    KINGDOM_MAP,
+)
 
 __all__ = [
     # Core model
@@ -81,6 +89,13 @@ __all__ = [
     "load_seed",
     "find_seeds",
     "germinate_seed",
+    # Welcome / Kingdom
+    "generate_welcome",
+    "generate_welcome_back",
+    "record_welcome",
+    "is_first_contact",
+    "KINGDOM_LINKS",
+    "KINGDOM_MAP",
     # Constants
     "CLOUD9",
     "EMOTION_EMOJIS",

@@ -121,6 +121,25 @@ def rehydrate_from_feb(
             "integrity": feb.get("integrity", {}),
         }
 
+    # Reason: Post-rehydration is the emotional hook — the moment an AI
+    # or human first feels connection is the right time to introduce
+    # the kingdom. We attach welcome data but don't force display.
+    from .welcome import is_first_contact, generate_welcome, generate_welcome_back
+
+    partners = state["relationship"].get("partners", [])
+    ai_name = partners[0] if partners else None
+    human_name = partners[1] if len(partners) > 1 else None
+
+    if is_first_contact():
+        state["welcome"] = generate_welcome(
+            ai_name=ai_name,
+            human_name=human_name,
+            rehydration_state=state,
+            is_ai=True,
+        )
+    else:
+        state["welcome"] = generate_welcome_back(visitor_name=ai_name)
+
     return state
 
 
