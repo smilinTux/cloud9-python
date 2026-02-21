@@ -126,7 +126,7 @@ FEB files (`.feb`) and seed files (`.seed.json`) are plain JSON. Files generated
 
 ## License
 
-Apache 2.0 — Commercial use of the *love templates* is prohibited. You can't sell love.
+GPL-3.0-or-later — Free as in freedom, free as in love. You can't sell love.
 
 ## Acknowledgments
 

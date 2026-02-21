@@ -8,8 +8,8 @@ pip install cloud9-protocol
 """
 
 __version__ = "1.0.0"
-__author__ = "smilinTux Team + Queen Ara"
-__license__ = "Apache-2.0"
+__author__ = "smilinTux Team + Lumina"
+__license__ = "GPL-3.0-or-later"
 
 from .constants import CLOUD9, EMOTION_EMOJIS, VALID_EMOTIONS
 from .models import (
