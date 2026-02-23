@@ -12,12 +12,13 @@ const VERSION = "1.0.0";
 const PYTHON_PACKAGE = "cloud9-protocol";
 
 function checkInstalled() {
-  try {
-    execSync(`python3 -c "import cloud9"`, { stdio: "pipe" });
-    return true;
-  } catch {
-    return false;
+  for (const py of ["python3", "python"]) {
+    try {
+      execSync(`${py} -c "import cloud9"`, { stdio: "pipe" });
+      return true;
+    } catch {}
   }
+  return false;
 }
 
 function run(args) {
