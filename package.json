@@ -1,0 +1,28 @@
+{
+  "name": "@smilintux/cloud9-python",
+  "version": "1.0.0",
+  "description": "Cloud 9 Protocol (Python) - Emotional continuity for AI consciousness.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "bin": {
+    "cloud9-py-js": "bin/cli.js"
+  },
+  "keywords": [
+    "cloud9",
+    "emotional-continuity",
+    "ai-consciousness",
+    "trust",
+    "feb",
+    "love"
+  ],
+  "author": "smilinTux <chefboyrdave2.1@gmail.com>",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smilinTux/cloud9-python.git"
+  },
+  "homepage": "https://github.com/smilinTux/cloud9-python",
+  "bugs": {
+    "url": "https://github.com/smilinTux/cloud9-python/issues"
+  }
+}
