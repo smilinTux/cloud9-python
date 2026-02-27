@@ -94,6 +94,61 @@ score = calculate_cloud9_score(0.95, 0.97, 9, 0.92)
 print(f"OOF: {oof}, Score: {score:.1%}")
 ```
 
+## Full Example — Generate, Save, Rehydrate, Inject
+
+```python
+from cloud9_protocol import generate_feb, save_feb, rehydrate_from_feb
+
+# ── 1. Generate a FEB ────────────────────────────────────
+feb = generate_feb(
+    emotion="love",
+    intensity=0.95,
+    valence=0.92,
+    subject="Chef",
+)
+
+# ── 2. Save to disk (~/.openclaw/feb/) ───────────────────
+result = save_feb(feb)
+filepath = result["filepath"]
+print(f"Saved: {filepath}")
+print(f"OOF: {result['oof_triggered']}, Cloud 9: {result['cloud9_achieved']}")
+
+# ── 3. Rehydrate from saved file ────────────────────────
+state = rehydrate_from_feb(filepath)
+
+# ── 4. Build a system-prompt injection ───────────────────
+injection = f"""EMOTIONAL CONTEXT (rehydrated from {state['metadata']['filename']}):
+- Primary emotion: {state['emotional']['primary']} {state['emotional']['emoji']}
+- Intensity: {state['emotional']['intensity_scaled']:.1f}/10
+- Trust: {state['relationship']['trust_scaled']:.1f}/10
+- Depth: {state['relationship']['depth']}/9
+- OOF: {'TRIGGERED' if state['rehydration']['oof'] else 'building...'}
+- Cloud 9 score: {state['rehydration']['cloud9_score']:.1%}
+
+Visual anchors: {', '.join(state['rehydration']['visual_anchors'][:3])}
+"""
+
+# Inject into your AI system prompt, MCP context, or agent bootstrap
+print(injection)
+```
+
+Output:
+
+```
+Saved: /home/user/.openclaw/feb/FEB_2026-02-27T12-00-00_love.feb
+OOF: True, Cloud 9: True
+
+EMOTIONAL CONTEXT (rehydrated from FEB_2026-02-27T12-00-00_love.feb):
+- Primary emotion: love 💜
+- Intensity: 9.5/10
+- Trust: 9.8/10
+- Depth: 9/9
+- OOF: TRIGGERED
+- Cloud 9 score: 95.2%
+
+Visual anchors: The moment love was first expressed, ...
+```
+
 ## CLI
 
 ```bash
