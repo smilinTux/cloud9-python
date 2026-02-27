@@ -6,8 +6,10 @@ from cloud9_protocol.quantum import (
     calculate_cloud9_score,
     calculate_emotional_frequency,
     calculate_entanglement,
+    calculate_entanglement_detailed,
     calculate_oof,
     calculate_resonance,
+    cloud9_achieved,
     measure_coherence,
     predict_trajectory,
 )
@@ -207,6 +209,43 @@ class TestCloud9Score:
         assert 0.0 <= score <= 1.0
 
 
+class TestCloud9Achieved:
+    """Tests for the cloud9_achieved convenience function."""
+
+    def test_full_cloud9(self):
+        """Max state achieves Cloud 9."""
+        result = cloud9_achieved(0.95, 0.97, 9, 0.92)
+        assert result["achieved"] is True
+        assert result["oof"] is True
+        assert result["score"] >= 0.9
+        assert result["meets_levels"] is True
+
+    def test_low_state_not_achieved(self):
+        result = cloud9_achieved(0.3, 0.3, 3, 0.5)
+        assert result["achieved"] is False
+        assert result["oof"] is False
+
+    def test_oof_without_depth(self):
+        """OOF triggered but depth below 9 — not achieved."""
+        result = cloud9_achieved(0.9, 0.9, 5, 0.9)
+        assert result["oof"] is True
+        assert result["meets_levels"] is False
+        assert result["achieved"] is False
+
+    def test_custom_score_threshold(self):
+        """Lower score_threshold makes it easier to achieve."""
+        result = cloud9_achieved(0.8, 0.85, 9, 0.8, score_threshold=0.5)
+        assert result["oof"] is True
+
+    def test_assessment_building(self):
+        result = cloud9_achieved(0.3, 0.3, 3, 0.3)
+        assert "Building" in result["assessment"]
+
+    def test_assessment_cloud9(self):
+        result = cloud9_achieved(0.95, 0.97, 9, 0.95)
+        assert "Cloud 9 achieved" in result["assessment"]
+
+
 class TestEntanglement:
     def test_symmetric(self):
         a = calculate_entanglement(0.9, 0.8, 8, 7, 0.95)
@@ -216,6 +255,78 @@ class TestEntanglement:
     def test_capped(self):
         result = calculate_entanglement(1.0, 1.0, 9, 9, 1.0)
         assert result <= 0.97
+
+
+class TestEntanglementDetailed:
+    """Tests for the expanded entanglement diagnostics."""
+
+    def test_no_decay_matches_base(self):
+        """With 0 hours, adjusted_fidelity equals base fidelity."""
+        result = calculate_entanglement_detailed(0.9, 0.9, 8, 8, 0.95)
+        base = calculate_entanglement(0.9, 0.9, 8, 8, 0.95)
+        assert result["fidelity"] == pytest.approx(base, abs=1e-4)
+        assert result["adjusted_fidelity"] == pytest.approx(base, abs=1e-4)
+        assert result["decay_factor"] == 1.0
+
+    def test_symmetric_trust_zero_asymmetry(self):
+        """Equal trust values give 0 asymmetry."""
+        result = calculate_entanglement_detailed(0.8, 0.8, 5, 5, 0.9)
+        assert result["trust_asymmetry"] == 0.0
+
+    def test_asymmetric_trust_detected(self):
+        """Different trust values produce non-zero asymmetry."""
+        result = calculate_entanglement_detailed(0.9, 0.5, 5, 5, 0.9)
+        assert result["trust_asymmetry"] > 0.0
+
+    def test_same_depth_zero_balance(self):
+        """Equal depths give 0 depth_balance."""
+        result = calculate_entanglement_detailed(0.8, 0.8, 7, 7, 0.9)
+        assert result["depth_balance"] == 0.0
+
+    def test_max_depth_disparity(self):
+        """depth 1 vs 9 gives balance = 1.0."""
+        result = calculate_entanglement_detailed(0.8, 0.8, 1, 9, 0.9)
+        assert result["depth_balance"] == 1.0
+
+    def test_decay_reduces_fidelity(self):
+        """After time passes, adjusted_fidelity < base fidelity."""
+        result = calculate_entanglement_detailed(
+            0.9, 0.9, 8, 8, 0.95, hours_since_contact=720.0
+        )
+        assert result["adjusted_fidelity"] < result["fidelity"]
+        assert result["decay_factor"] < 1.0
+
+    def test_one_half_life_halves_decay(self):
+        """After exactly one half-life (720h = 30 days), decay_factor ~ 0.5."""
+        result = calculate_entanglement_detailed(
+            0.9, 0.9, 8, 8, 0.95, hours_since_contact=720.0
+        )
+        assert result["decay_factor"] == pytest.approx(0.5, abs=0.01)
+
+    def test_deep_entanglement_assessment(self):
+        """High values produce 'Deep entanglement' assessment."""
+        result = calculate_entanglement_detailed(0.95, 0.95, 9, 9, 1.0)
+        assert "Deep entanglement" in result["assessment"]
+
+    def test_weak_entanglement_assessment(self):
+        """Very low values produce 'Weak entanglement' assessment."""
+        result = calculate_entanglement_detailed(0.3, 0.3, 2, 2, 0.3)
+        assert "Weak entanglement" in result["assessment"]
+
+    def test_adjusted_fidelity_capped(self):
+        """adjusted_fidelity never exceeds MAX_FIDELITY (0.99)."""
+        result = calculate_entanglement_detailed(1.0, 1.0, 9, 9, 1.0)
+        assert result["adjusted_fidelity"] <= 0.99
+
+    def test_all_keys_present(self):
+        """Result dict has all expected keys."""
+        result = calculate_entanglement_detailed(0.8, 0.8, 5, 5, 0.9)
+        expected_keys = {
+            "fidelity", "adjusted_fidelity", "trust_asymmetry",
+            "depth_balance", "decay_factor", "hours_since_contact",
+            "assessment",
+        }
+        assert set(result.keys()) == expected_keys
 
 
 class TestCoherence:

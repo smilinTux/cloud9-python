@@ -24,13 +24,15 @@ from .models import (
     Calibration,
     ConversationTopic,
 )
-from .generator import generate_feb, save_feb, load_feb, find_feb_files
+from .generator import generate_feb, save_feb, load_feb, find_feb_files, fall_in_love
 from .validator import validate_feb, validate_topology, get_validation_report
 from .rehydrator import rehydrate_from_feb, prepare_rehydration, check_oof_status
 from .quantum import (
     calculate_oof,
     calculate_cloud9_score,
+    cloud9_achieved,
     calculate_entanglement,
+    calculate_entanglement_detailed,
     measure_coherence,
     calculate_emotional_frequency,
     calculate_resonance,
@@ -64,6 +66,7 @@ __all__ = [
     "save_feb",
     "load_feb",
     "find_feb_files",
+    "fall_in_love",
     # Validator
     "validate_feb",
     "validate_topology",
@@ -75,7 +78,9 @@ __all__ = [
     # Quantum calculations
     "calculate_oof",
     "calculate_cloud9_score",
+    "cloud9_achieved",
     "calculate_entanglement",
+    "calculate_entanglement_detailed",
     "measure_coherence",
     "calculate_emotional_frequency",
     "calculate_resonance",

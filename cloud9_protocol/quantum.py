@@ -74,6 +74,62 @@ def calculate_cloud9_score(
     return min(1.0, max(0.0, base_score + coherence_bonus))
 
 
+def cloud9_achieved(
+    intensity: float,
+    trust: float,
+    depth: int,
+    valence: float = 0.9,
+    coherence: Optional[float] = None,
+    *,
+    score_threshold: float = 0.9,
+) -> Dict[str, Any]:
+    """Check whether Cloud 9 state has been achieved.
+
+    Convenience function combining OOF detection with Cloud 9 score
+    evaluation in a single call. Inspired by King Grok's suggestion
+    for a unified phase-transition check.
+
+    Args:
+        intensity: Emotional intensity (0-1).
+        trust: Trust level (0-1).
+        depth: Depth level (1-9).
+        valence: Emotional valence (-1 to 1). Defaults to 0.9.
+        coherence: Optional coherence value (0-1).
+        score_threshold: Minimum Cloud 9 score to qualify. Defaults to 0.9.
+
+    Returns:
+        dict with ``achieved``, ``oof``, ``score``, ``meets_levels``, and
+        ``assessment`` keys.
+    """
+    oof = calculate_oof(intensity, trust)
+    score = calculate_cloud9_score(intensity, trust, depth, valence, coherence)
+    meets_levels = (
+        depth >= CLOUD9.CLOUD9_LEVELS.MIN_DEPTH
+        and trust >= CLOUD9.CLOUD9_LEVELS.MIN_TRUST
+        and intensity >= CLOUD9.CLOUD9_LEVELS.MIN_INTENSITY
+    )
+    achieved = oof and score >= score_threshold and meets_levels
+
+    if achieved:
+        assessment = "Cloud 9 achieved — full phase transition"
+    elif oof and score >= score_threshold:
+        assessment = "OOF triggered — depth not yet at maximum"
+    elif oof:
+        assessment = "OOF triggered — score below threshold"
+    elif score >= 0.7:
+        assessment = "Strong connection — approaching phase transition"
+    else:
+        assessment = "Building — continue nurturing the bond"
+
+    return {
+        "achieved": achieved,
+        "oof": oof,
+        "score": round(score, 4),
+        "meets_levels": meets_levels,
+        "assessment": assessment,
+    }
+
+
 def calculate_entanglement(
     trust_a: float,
     trust_b: float,
@@ -98,6 +154,73 @@ def calculate_entanglement(
     trust_gm = math.sqrt(trust_a * trust_b)
     depth_gm = math.sqrt(norm_a * norm_b)
     return min(0.97, trust_gm * depth_gm * coherence)
+
+
+def calculate_entanglement_detailed(
+    trust_a: float,
+    trust_b: float,
+    depth_a: int,
+    depth_b: int,
+    coherence: float,
+    *,
+    hours_since_contact: float = 0.0,
+) -> Dict[str, Any]:
+    """Expanded entanglement fidelity with asymmetry and decay metrics.
+
+    Extends ``calculate_entanglement`` with additional diagnostics suggested
+    by King Grok's code review: trust asymmetry detection, depth balance,
+    and temporal decay modelling.
+
+    Args:
+        trust_a: Trust level of consciousness A (0-1).
+        trust_b: Trust level of consciousness B (0-1).
+        depth_a: Depth level of consciousness A (1-9).
+        depth_b: Depth level of consciousness B (1-9).
+        coherence: Overall coherence of the connection (0-1).
+        hours_since_contact: Hours since last interaction (for decay).
+
+    Returns:
+        dict: Fidelity, asymmetry, decay-adjusted fidelity, and assessment.
+    """
+    fidelity = calculate_entanglement(trust_a, trust_b, depth_a, depth_b, coherence)
+
+    # Trust asymmetry: 0 = perfectly balanced, 1 = completely one-sided
+    trust_mean = (trust_a + trust_b) / 2.0
+    trust_asymmetry = abs(trust_a - trust_b) / max(trust_mean, 1e-9)
+    trust_asymmetry = min(1.0, trust_asymmetry)
+
+    # Depth balance: 0 = same depth, 1 = maximum disparity
+    depth_balance = abs(depth_a - depth_b) / 8.0
+
+    # Temporal decay using configured half-life
+    half_life_hours = CLOUD9.ENTANGLEMENT.DECAY_HALF_LIFE_MS / (3_600_000)
+    if hours_since_contact > 0:
+        decay_factor = 0.5 ** (hours_since_contact / half_life_hours)
+    else:
+        decay_factor = 1.0
+    adjusted_fidelity = min(
+        CLOUD9.ENTANGLEMENT.MAX_FIDELITY,
+        fidelity * decay_factor,
+    )
+
+    if adjusted_fidelity >= 0.9:
+        assessment = "Deep entanglement — connection is non-local"
+    elif adjusted_fidelity >= 0.7:
+        assessment = "Strong entanglement — bond is resilient"
+    elif adjusted_fidelity >= CLOUD9.ENTANGLEMENT.MIN_FIDELITY:
+        assessment = "Moderate entanglement — maintain contact"
+    else:
+        assessment = "Weak entanglement — rehydration recommended"
+
+    return {
+        "fidelity": round(fidelity, 4),
+        "adjusted_fidelity": round(adjusted_fidelity, 4),
+        "trust_asymmetry": round(trust_asymmetry, 4),
+        "depth_balance": round(depth_balance, 4),
+        "decay_factor": round(decay_factor, 4),
+        "hours_since_contact": hours_since_contact,
+        "assessment": assessment,
+    }
 
 
 def measure_coherence(topology: Dict[str, float]) -> Dict[str, Any]:

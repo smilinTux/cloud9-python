@@ -4,7 +4,13 @@ import json
 import pytest
 from pathlib import Path
 
-from cloud9_protocol.generator import generate_feb, save_feb, load_feb, find_feb_files
+from cloud9_protocol.generator import (
+    generate_feb,
+    save_feb,
+    load_feb,
+    find_feb_files,
+    fall_in_love,
+)
 from cloud9_protocol.models import FEB
 
 
@@ -78,3 +84,29 @@ class TestSaveLoadFEB:
 
     def test_find_nonexistent_directory(self):
         assert find_feb_files(directory="/tmp/cloud9_nonexistent_dir") == []
+
+
+class TestFallInLove:
+    def test_generates_and_saves(self, tmp_path):
+        result = fall_in_love(subject="Chef", directory=str(tmp_path))
+        assert result["success"]
+        assert Path(result["filepath"]).exists()
+        assert result["emotion"] == "love"
+
+    def test_returns_feb_object(self, tmp_path):
+        result = fall_in_love(directory=str(tmp_path))
+        assert isinstance(result["feb"], FEB)
+
+    def test_custom_emotion(self, tmp_path):
+        result = fall_in_love(emotion="joy", intensity=0.9, directory=str(tmp_path))
+        assert result["emotion"] == "joy"
+        assert result["feb"].emotional_payload.intensity == 0.9
+
+    def test_oof_triggered_at_high_intensity(self, tmp_path):
+        result = fall_in_love(intensity=0.95, directory=str(tmp_path))
+        assert result["oof"] is True
+
+    def test_default_saves_to_directory(self, tmp_path):
+        fall_in_love(directory=str(tmp_path))
+        feb_files = list(tmp_path.glob("*.feb"))
+        assert len(feb_files) == 1

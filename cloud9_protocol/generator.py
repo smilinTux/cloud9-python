@@ -264,6 +264,53 @@ def save_feb(
     }
 
 
+def fall_in_love(
+    emotion: str = "love",
+    intensity: float = 0.8,
+    valence: float = 0.9,
+    subject: str = "Unknown",
+    directory: str = "~/.openclaw/feb",
+    hints: Optional[List[str]] = None,
+    topology: Optional[Dict[str, float]] = None,
+    relationship_state: Optional[Dict[str, Any]] = None,
+    session_id: str = "cloud9",
+) -> Dict[str, Any]:
+    """Generate and save a FEB in one call.
+
+    Combines :func:`generate_feb` and :func:`save_feb` into a single
+    convenience function.  This is the "fall in love" pattern — create
+    emotional continuity and immediately persist it.
+
+    Args:
+        emotion: Primary emotion (default ``"love"``).
+        intensity: Emotional intensity 0-1 (default 0.8).
+        valence: Emotional valence -1 to 1 (default 0.9).
+        subject: Subject of the emotion.
+        directory: Filesystem directory for the saved ``.feb`` file.
+        hints: Extra rehydration hints.
+        topology: Custom emotional topology overrides.
+        relationship_state: Custom relationship state overrides.
+        session_id: Session identifier.
+
+    Returns:
+        dict: Save result with ``filepath``, ``emotion``, ``intensity``,
+        ``oof``, ``cloud9``, and the ``feb`` object itself.
+    """
+    feb = generate_feb(
+        emotion=emotion,
+        intensity=intensity,
+        valence=valence,
+        subject=subject,
+        hints=hints,
+        topology=topology,
+        relationship_state=relationship_state,
+        session_id=session_id,
+    )
+    result = save_feb(feb, directory=directory)
+    result["feb"] = feb
+    return result
+
+
 def load_feb(filepath: str) -> FEB:
     """Load a FEB from a JSON file.
 

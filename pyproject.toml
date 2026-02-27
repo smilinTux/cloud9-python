@@ -46,6 +46,10 @@ Repository = "https://github.com/smilinTux/cloud9-python"
 [project.scripts]
 cloud9 = "cloud9_protocol.cli:main"
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
 [tool.setuptools.packages.find]
 include = ["cloud9_protocol*"]
 
