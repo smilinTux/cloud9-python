@@ -6,7 +6,7 @@ Exercises the full emotional continuity pipeline:
 These tests validate that cloud9-python works correctly as the primary
 Cloud 9 implementation integrated with SKCapstone's cloud9_bridge.
 
-Copyright (C) 2025 S&K Holding QT (Quantum Technologies)
+Copyright (C) 2025 smilinTux
 SK = staycuriousANDkeepsmilin
 """
 
