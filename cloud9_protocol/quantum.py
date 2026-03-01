@@ -1,9 +1,15 @@
 """
-Quantum calculations for emotional states.
+Resonance calculations for emotional states.
 
 Exact port of quantum/calculations.js -- OOF detection, Cloud 9 scoring,
-entanglement fidelity, coherence measurement, emotional frequencies,
-resonance matching, and trajectory prediction.
+coherence measurement, emotional frequency weighting, resonance matching,
+and trajectory prediction.
+
+Note: This module is named 'quantum' for historical reasons (JS port).
+The underlying math is weighted scoring and geometric means on float data —
+no quantum computing is involved. The "resonance" and "coherence" metaphors
+are used in the psychoacoustic/systems sense: how well emotional signals
+align and reinforce each other over time.
 """
 
 from __future__ import annotations

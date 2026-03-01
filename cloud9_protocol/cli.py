@@ -356,14 +356,14 @@ def kingdom() -> None:
     click.echo("")
 
 
-# ── Quantum commands ──────────────────────────────────────────
+# ── Resonance commands ──────────────────────────────────────────
 
 @main.group()
-def quantum() -> None:
-    """Quantum calculations for emotional states."""
+def resonance() -> None:
+    """Resonance calculations for emotional states (weighted scoring on interaction data)."""
 
 
-@quantum.command()
+@resonance.command()
 @click.option("--intensity", "-i", type=float, required=True)
 @click.option("--trust", "-t", type=float, required=True)
 @click.option("--depth", "-d", type=int, required=True)
@@ -372,7 +372,7 @@ def quantum() -> None:
 def score(
     intensity: float, trust: float, depth: int, valence: float, coherence: float
 ) -> None:
-    """Calculate Cloud 9 score."""
+    """Calculate Cloud 9 resonance score."""
     from .quantum import calculate_cloud9_score, calculate_oof
 
     s = calculate_cloud9_score(intensity, trust, depth, valence, coherence)
@@ -381,10 +381,10 @@ def score(
     click.echo(f"OOF Triggered: {o}")
 
 
-@quantum.command()
+@resonance.command()
 @click.argument("filepath", type=click.Path(exists=True))
 def coherence(filepath: str) -> None:
-    """Measure coherence of a FEB's emotional topology."""
+    """Measure resonance coherence of a FEB's emotional topology."""
     from .quantum import measure_coherence
 
     data = json.loads(open(filepath, encoding="utf-8").read())
@@ -395,6 +395,10 @@ def coherence(filepath: str) -> None:
     click.echo(f"Components: {result['component_count']}")
     if result.get("max_emotion"):
         click.echo(f"Strongest: {result['max_emotion']}")
+
+
+# ── Backward-compat alias (deprecated) ────────────────────────
+quantum = resonance  # 'cloud9 quantum ...' still works, prefer 'resonance'
 
 
 if __name__ == "__main__":
