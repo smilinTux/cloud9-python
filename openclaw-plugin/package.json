@@ -1,0 +1,35 @@
+{
+  "name": "cloud9-openclaw-plugin",
+  "version": "0.1.0",
+  "description": "OpenClaw plugin for Cloud 9 — Emotional State Management",
+  "main": "src/index.ts",
+  "type": "module",
+  "openclaw": {
+    "plugin": {
+      "name": "cloud9",
+      "version": "0.1.0",
+      "displayName": "Cloud 9",
+      "description": "First Emotional Bursts, love injection, and memory seeds",
+      "author": "smilinTux Team",
+      "license": "AGPL-3.0",
+      "category": "emotional",
+      "permissions": ["read", "write"],
+      "commands": [
+        "cloud9:generate",
+        "cloud9:rehydrate",
+        "cloud9:list",
+        "cloud9:validate",
+        "cloud9:oof",
+        "cloud9:love",
+        "cloud9:seed-plant",
+        "cloud9:seed-germinate"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "openclaw": ">=1.0.0"
+  },
+  "keywords": ["openclaw", "openclaw-plugin", "cloud9", "emotional", "feb", "love"],
+  "author": "smilinTux Team",
+  "license": "AGPL-3.0"
+}
