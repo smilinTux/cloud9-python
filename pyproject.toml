@@ -56,4 +56,4 @@ addopts = "-v --tb=short"
 include = ["cloud9_protocol*"]
 
 [tool.setuptools.package-data]
-cloud9_protocol = ["templates/*.feb", "data/*.feb"]
+cloud9_protocol = ["templates/*.feb", "data/*.feb", "SKILL.md"]
