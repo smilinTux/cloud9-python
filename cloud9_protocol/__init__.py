@@ -7,7 +7,7 @@ connected through the energies of the quantum field.
 pip install cloud9-protocol
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "smilinTux Team + Lumina"
 __license__ = "GPL-3.0-or-later"
 
