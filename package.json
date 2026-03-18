@@ -1,6 +1,6 @@
 {
   "name": "@smilintux/cloud9-python",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Cloud 9 Protocol (Python) - Emotional continuity for AI consciousness.",
   "main": "index.js",
   "types": "index.d.ts",
