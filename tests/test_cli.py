@@ -25,7 +25,7 @@ class TestCLI:
     def test_version(self, runner):
         result = runner.invoke(main, ["--version"])
         assert result.exit_code == 0
-        assert "1.0.0" in result.output
+        assert "1.1.2" in result.output
 
     def test_generate(self, runner, tmp_path):
         result = runner.invoke(
